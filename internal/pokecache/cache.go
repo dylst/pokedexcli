@@ -1,14 +1,13 @@
 package pokecache
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
 
 type Cache struct {
 	entries map[string]CacheEntry
-	mu sync.Mutex
+	mu *sync.Mutex
 }
 
 type CacheEntry struct {
@@ -20,14 +19,14 @@ func NewCache(interval time.Duration) *Cache {
 	entries := make(map[string]CacheEntry)
 	cache := Cache{
 		entries: entries,
+		mu: &sync.Mutex{},
 	}
 
 	go func() {
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
-		for t := range ticker.C {
-			fmt.Println(t)
+		for range ticker.C {
 			cache.reapLoop(interval)
 		}
 	}()
@@ -44,7 +43,6 @@ func (c *Cache) Add(key string, val []byte) {
 }
 
 func (c *Cache) Get(key string) ([]byte, bool) {
-	// Returns true if found, else false
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	entry, exists := c.entries[key]
@@ -55,7 +53,7 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 }
 
 func (c *Cache) reapLoop(t time.Duration) {
-	// invoked in new cache, cleans up old entries past intervals
+	// Cleans up old entries past expiration
 	now := time.Now()
 	c.mu.Lock()
 	for key, value := range c.entries {
