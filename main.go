@@ -4,15 +4,12 @@ import (
 	"time"
 
 	"github.com/dylst/pokedexcli/internal/pokeapi"
-	"github.com/dylst/pokedexcli/internal/pokecache"
 )
 
 func main() {
-	pokeClient := pokeapi.NewClient(time.Second * 60)
-	pokeCache := pokecache.NewCache(time.Second * 60)
+	pokeClient := pokeapi.NewClient(time.Second * 5, time.Minute * 5)
 	cfg := config{
 		pokeApiClient: pokeClient,
-		pokeCache: pokeCache,
 	}
 	startRepl(cfg)
 }

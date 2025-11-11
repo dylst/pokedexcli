@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/dylst/pokedexcli/internal/pokeapi"
-	"github.com/dylst/pokedexcli/internal/pokecache"
 )
 
 type cliCommand struct {
@@ -18,7 +17,6 @@ type cliCommand struct {
 
 type config struct {
 	pokeApiClient pokeapi.Client
-	pokeCache *pokecache.Cache
 	Next *string 
 	Previous *string
 }

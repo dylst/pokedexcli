@@ -24,7 +24,7 @@ func commandHelp(c *config) error {
 }
 
 func commandMap(c *config) error {
-	locationAreas, err := c.pokeApiClient.ListLocations(c.Next, c.pokeCache)
+	locationAreas, err := c.pokeApiClient.ListLocations(c.Next)
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func commandMap(c *config) error {
 }
 
 func commandMapB(c *config) error {
-	locationAreas, err := c.pokeApiClient.ListLocations(c.Previous, c.pokeCache)
+	locationAreas, err := c.pokeApiClient.ListLocations(c.Previous)
 	if err != nil {
 		return err
 	}

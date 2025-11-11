@@ -15,7 +15,7 @@ type CacheEntry struct {
 	val []byte
 }
 
-func NewCache(interval time.Duration) *Cache {
+func NewCache(interval time.Duration) Cache {
 	entries := make(map[string]CacheEntry)
 	cache := Cache{
 		entries: entries,
@@ -30,7 +30,7 @@ func NewCache(interval time.Duration) *Cache {
 			cache.reapLoop(interval)
 		}
 	}()
-	return &cache
+	return cache
 }
 
 func (c *Cache) Add(key string, val []byte) {
