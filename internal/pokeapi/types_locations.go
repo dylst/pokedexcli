@@ -1,29 +1,6 @@
 package pokeapi
 
-/*
-map[count:1089 next:https://pokeapi.co/api/v2/location-area?offset=20&limit=20 previous:<nil>
-results:[map[name:canalave-city-area url:https://pokeapi.co/api/v2/location-area/1/]
-		 map[name:eterna-city-area url:https://pokeapi.co/api/v2/location-area/2/]
-		 map[name:pastoria-city-area url:https://pokeapi.co/api/v2/location-area/3/]
-		 map[name:sunyshore-city-area url:https://pokeapi.co/api/v2/location-area/4/]
-		 map[name:sinnoh-pokemon-league-area url:https://pokeapi.co/api/v2/location-area/5/]
-		 map[name:oreburgh-mine-1f url:https://pokeapi.co/api/v2/location-area/6/]
-		 map[name:oreburgh-mine-b1f url:https://pokeapi.co/api/v2/location-area/7/]
-		 map[name:valley-windworks-area url:https://pokeapi.co/api/v2/location-area/8/]
-		 map[name:eterna-forest-area url:https://pokeapi.co/api/v2/location-area/9/]
-		 map[name:fuego-ironworks-area url:https://pokeapi.co/api/v2/location-area/10/]
-		 map[name:mt-coronet-1f-route-207 url:https://pokeapi.co/api/v2/location-area/11/]
-		 map[name:mt-coronet-2f url:https://pokeapi.co/api/v2/location-area/12/]
-		 map[name:mt-coronet-3f url:https://pokeapi.co/api/v2/location-area/13/]
-		 map[name:mt-coronet-exterior-snowfall url:https://pokeapi.co/api/v2/location-area/14/]
-		 map[name:mt-coronet-exterior-blizzard url:https://pokeapi.co/api/v2/location-area/15/]
-		 map[name:mt-coronet-4f url:https://pokeapi.co/api/v2/location-area/16/]
-		 map[name:mt-coronet-4f-small-room url:https://pokeapi.co/api/v2/location-area/17/]
-		 map[name:mt-coronet-5f url:https://pokeapi.co/api/v2/location-area/18/]
-		 map[name:mt-coronet-6f url:https://pokeapi.co/api/v2/location-area/19/]
-		 map[name:mt-coronet-1f-from-exterior url:https://pokeapi.co/api/v2/location-area/20/]
-		]]
-*/
+// list location areas
 type RespLocations struct {
 	Count int `json:"count"`
 	Next *string `json:"next"`
@@ -32,4 +9,55 @@ type RespLocations struct {
 		Name string `json:"name"`
 		Url string `json:"url"`
 	} `json:"results"`
+}
+
+// explore location area 
+type Resource struct {
+    Name string `json:"name"`
+    URL  string `json:"url"`
+}
+
+type LocalizedName struct {
+    Language Resource `json:"language"`
+    Name     string   `json:"name"`
+}
+
+type EncounterMethodRate struct {
+    EncounterMethod Resource                   `json:"encounter_method"`
+    VersionDetails  []EncounterMethodVerDetail `json:"version_details"`
+}
+
+type EncounterMethodVerDetail struct {
+    Rate    int      `json:"rate"`
+    Version Resource `json:"version"`
+}
+
+type EncounterDetail struct {
+    Chance          int        `json:"chance"`
+    ConditionValues []Resource `json:"condition_values"`
+    MaxLevel        int        `json:"max_level"`
+    Method          Resource   `json:"method"`
+    MinLevel        int        `json:"min_level"`
+}
+
+type PokemonVersionDetail struct {
+    EncounterDetails []EncounterDetail `json:"encounter_details"`
+    MaxChance        int               `json:"max_chance"`
+    Version          Resource          `json:"version"`
+}
+
+type PokemonEncounter struct {
+    Pokemon        Resource               `json:"pokemon"`
+    VersionDetails []PokemonVersionDetail `json:"version_details"`
+}
+
+// Top-level response for explore location (location-area).
+type ExploreLocationResponse struct {
+    ID                   int                     `json:"id"`
+    Name                 string                  `json:"name"`
+    GameIndex            int                     `json:"game_index"`
+    Location             Resource                `json:"location"`
+    Names                []LocalizedName         `json:"names"`
+    EncounterMethodRates []EncounterMethodRate  `json:"encounter_method_rates"`
+    PokemonEncounters    []PokemonEncounter      `json:"pokemon_encounters"`
 }

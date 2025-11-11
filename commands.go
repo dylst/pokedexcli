@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-func commandExit(c *config) error {
+func commandExit(c *config, args ...string) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(c *config) error {
+func commandHelp(c *config, args ...string) error {
 	fmt.Println("\nWelcome to the Pokedex!")
 	fmt.Println("\nUsage:")
 	fmt.Println()
@@ -23,7 +23,7 @@ func commandHelp(c *config) error {
 	return nil
 }
 
-func commandMap(c *config) error {
+func commandMap(c *config, args ...string) error {
 	locationAreas, err := c.pokeApiClient.ListLocations(c.Next)
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func commandMap(c *config) error {
 	return nil
 }
 
-func commandMapB(c *config) error {
+func commandMapB(c *config, args ...string) error {
 	locationAreas, err := c.pokeApiClient.ListLocations(c.Previous)
 	if err != nil {
 		return err
@@ -50,5 +50,23 @@ func commandMapB(c *config) error {
 	}
 	c.Next = locationAreas.Next
 	c.Previous = locationAreas.Previous
+	return nil
+}
+
+func commandExplore(c *config, args ...string) error {
+	if len(args) != 1 {
+		return fmt.Errorf("you must provide a location name")
+	}
+	name := args[0]
+	location, err := c.pokeApiClient.ExploreLocation(name)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Exploring %s...\n", location.Name)
+	fmt.Println("Found Pokemon:")
+	for _, en := range location.PokemonEncounters {
+		fmt.Printf("- %s\n", en.Pokemon.Name)
+	}
 	return nil
 }
