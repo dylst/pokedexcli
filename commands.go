@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 )
 
@@ -67,6 +68,66 @@ func commandExplore(c *config, args ...string) error {
 	fmt.Println("Found Pokemon:")
 	for _, en := range location.PokemonEncounters {
 		fmt.Printf("- %s\n", en.Pokemon.Name)
+	}
+	return nil
+}
+
+func commandCatch(c *config, args ...string) error {
+	if len(args) != 1 {
+		return fmt.Errorf("you must provide a pokemon name")
+	}
+	name := args[0]
+	pokemon, err := c.pokeApiClient.GetPokemon(name)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	success := catchHelper(pokemon.BaseExperience)
+	if success {
+		fmt.Printf("%s was caught!\n", pokemon.Name)
+		fmt.Println("You may now inspect it with the inspect command.")
+		c.caughtPokemon[pokemon.Name] = pokemon
+	} else {
+		fmt.Printf("%s escaped!\n", pokemon.Name)
+	}
+
+	return nil
+}
+
+func catchHelper(baseExperience int) bool {
+	catchRate := (float64(baseExperience) / 1000) * 1.5
+	random := rand.Float64()
+	return catchRate > random
+}
+
+func commandInspect(c *config, args ...string) error {
+	if len(args) != 1 {
+		return fmt.Errorf("you must provide a pokemon name")
+	}
+	name := args[0]
+	pokemon, exists := c.caughtPokemon[name]; 
+	if !exists {
+		return fmt.Errorf("you have not caught that pokemon")
+	}
+	fmt.Printf("Name: %s\n", pokemon.Name)
+	fmt.Printf("Height: %v\n", pokemon.Height)
+	fmt.Printf("Weight: %v\n", pokemon.Weight)
+	fmt.Println("Stats:")
+	for _, stat := range pokemon.Stats {
+		fmt.Printf("-%s: %v\n", stat.Stat.Name, stat.BaseStat)
+	}
+	fmt.Println("Types:")
+	for _, t := range pokemon.Types {
+		fmt.Printf("- %s\n", t.Type.Name)
+	}
+	return nil
+}
+
+func commandPokedex(c *config, args ...string) error {
+	fmt.Println("Your pokedex:")
+
+	for _, pkmn := range c.caughtPokemon {
+		fmt.Printf("- %s\n", pkmn.Name)
 	}
 	return nil
 }
